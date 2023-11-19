@@ -3,10 +3,13 @@ import {
   Button,
   HStack,
   IconButton,
+  LightMode,
+  useColorMode,
+  useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import React from "react";
-import { FaAirbnb, FaMoon } from "react-icons/fa";
+import { FaAirbnb, FaMoon, FaSun } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import LoginModal from "./LoginModal";
 import SignUpModal from "./SignUpModal";
@@ -22,6 +25,9 @@ const Header = () => {
     onOpen: onSignUpOpen,
     onClose: onSignUpClose,
   } = useDisclosure();
+  const { toggleColorMode } = useColorMode();
+  const logoColor = useColorModeValue("red.500", "red.200");
+  const Icon = useColorModeValue(FaMoon, FaSun);
 
   return (
     <HStack
@@ -30,21 +36,24 @@ const Header = () => {
       px={10}
       borderBottomWidth={1}
     >
-      <Box color="red.500">
+      <Box color={logoColor}>
         <Link to={"/"}>
           <FaAirbnb size={"48"} />
         </Link>
       </Box>
       <HStack spacing={2}>
         <IconButton
+          onClick={toggleColorMode}
           variant={"ghost"}
           aria-label="Toggle dark mode"
-          icon={<FaMoon />}
+          icon={<Icon />}
         ></IconButton>
         <Button onClick={onLoginOpen}>Log in</Button>
-        <Button onClick={onSignUpOpen} colorScheme={"red"}>
-          Sign up
-        </Button>
+        <LightMode>
+          <Button onClick={onSignUpOpen} colorScheme={"red"}>
+            Sign up
+          </Button>
+        </LightMode>
       </HStack>
       <LoginModal isOpen={isLoginOpen} onClose={onLoginClose} />
       <SignUpModal isOpen={isSignUpOpen} onClose={onSignUpClose} />
