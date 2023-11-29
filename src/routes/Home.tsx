@@ -1,8 +1,7 @@
-import { Text, Grid, VStack, Box, Image, HStack } from "@chakra-ui/react";
-import { FaStar } from "react-icons/fa";
+import { Grid } from "@chakra-ui/react";
 import Room from "../components/Room";
 import RoomSkeleton from "../components/RoomSkeleton";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getRooms } from "../api";
 
 interface IPhoto {
@@ -11,7 +10,7 @@ interface IPhoto {
   description: string;
 }
 
-interface IRoom {
+export interface IRoom {
   pk: number;
   name: string;
   country: string;
@@ -23,7 +22,10 @@ interface IRoom {
 }
 
 export default function Home() {
-  const { isLoading, data } = useQuery<IRoom[]>(["rooms"], getRooms);
+  const { isLoading, data } = useQuery<IRoom[]>({
+    queryKey: ["rooms"],
+    queryFn: getRooms,
+  });
   return (
     <Grid
       mt={10}
@@ -54,17 +56,19 @@ export default function Home() {
           <RoomSkeleton />
         </>
       ) : null}
-      {data?.map((room) => (
-        <Room
-          key={room.pk}
-          imageUrl={room.photos[0].file}
-          name={room.name}
-          rating={room.rating}
-          city={room.city}
-          country={room.country}
-          price={room.price}
-        />
-      ))}
+      {data &&
+        (data as IRoom[]).map((room) => (
+          <Room
+            key={room.pk}
+            pk={room.pk}
+            imageUrl={room.photos[0].file}
+            name={room.name}
+            rating={room.rating}
+            city={room.city}
+            country={room.country}
+            price={room.price}
+          />
+        ))}
     </Grid>
   );
 }

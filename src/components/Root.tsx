@@ -1,30 +1,14 @@
-import { Link, Outlet } from "react-router-dom";
-import {
-  Box,
-  Button,
-  HStack,
-  IconButton,
-  ModalContent,
-  ModalOverlay,
-  useDisclosure,
-  Modal,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  VStack,
-  InputLeftElement,
-  InputGroup,
-  Input,
-} from "@chakra-ui/react";
-import { FaAirbnb, FaLock, FaMoon, FaUserNinja } from "react-icons/fa";
+import { Outlet } from "react-router-dom";
+import { Box } from "@chakra-ui/react";
 import Header from "./Header";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export default function Root() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Box>
       <Header />
-      <Outlet></Outlet>
+      <Outlet />
+      <ReactQueryDevtools />
     </Box>
   );
 }
