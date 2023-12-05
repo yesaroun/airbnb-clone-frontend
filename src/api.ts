@@ -19,3 +19,10 @@ export const getRoom = ({ queryKey }: QueryFunctionContext) => {
     .get(`rooms/${roomPk}`)
     .then((response) => delay(5000).then(() => response.data));
 };
+
+export const getRoomReviews = ({ queryKey }: QueryFunctionContext) => {
+  const [_, roomPk] = queryKey;
+  return instance
+    .get(`rooms/${roomPk}/reviews`)
+    .then((response) => response.data);
+};
