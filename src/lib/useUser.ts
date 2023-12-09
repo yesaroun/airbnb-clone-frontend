@@ -6,6 +6,7 @@ export default function useUser() {
     queryKey: ["me"],
     queryFn: getMe,
     retry: false,
+    refetchOnWindowFocus: false,
   });
   return {
     userLoading: isLoading,
