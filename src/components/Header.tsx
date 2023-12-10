@@ -10,19 +10,20 @@ import {
   MenuItem,
   MenuList,
   Stack,
+  ToastId,
   useColorMode,
   useColorModeValue,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useRef } from "react";
 import { FaAirbnb, FaMoon, FaSun } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import LoginModal from "./LoginModal";
 import SignUpModal from "./SignUpModal";
 import useUser from "../lib/useUser";
 import { logOut } from "../api";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const Header: React.FC = () => {
   const { userLoading, isLoggedIn, user } = useUser();
@@ -41,20 +42,29 @@ const Header: React.FC = () => {
   const Icon = useColorModeValue(FaMoon, FaSun);
   const toast = useToast();
   const queryClient = useQueryClient();
+  const toastId = useRef<ToastId>();
+  const mutation = useMutation(logOut, {
+    onMutate: () => {
+      toastId.current = toast({
+        title: "Login out...",
+        description: "Sad to see you go...",
+        status: "loading",
+        position: "bottom-right",
+      });
+    },
+    onSuccess: () => {
+      if (toastId.current) {
+        queryClient.refetchQueries(["me"]);
+        toast.update(toastId.current, {
+          status: "success",
+          title: "Done!",
+          description: "See you later!",
+        });
+      }
+    },
+  });
   const onLogOut = async () => {
-    const toastId = toast({
-      title: "Login out...",
-      description: "Sad to see you go...",
-      status: "loading",
-      position: "bottom-right",
-    });
-    const data = await logOut();
-    queryClient.refetchQueries({ queryKey: ["me"] });
-    toast.update(toastId, {
-      status: "success",
-      title: "Done!",
-      description: "See you later!",
-    });
+    mutation.mutate();
   };
 
   return (
