@@ -49,6 +49,7 @@ const Header: React.FC = () => {
         title: "Login out...",
         description: "Sad to see you go...",
         status: "loading",
+        duration: 10000,
         position: "bottom-right",
       });
     },
@@ -111,6 +112,11 @@ const Header: React.FC = () => {
                 <Avatar name={user?.name} src={user?.avatar} size={"md"} />
               </MenuButton>
               <MenuList>
+                {user?.is_host ? (
+                  <Link to="/rooms/upload">
+                    <MenuItem>Upload room</MenuItem>
+                  </Link>
+                ) : null}
                 <MenuItem onClick={onLogOut}>Log out</MenuItem>
               </MenuList>
             </Menu>
