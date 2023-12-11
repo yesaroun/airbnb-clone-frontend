@@ -3,11 +3,13 @@ import ProtectedPage from "../components/ProtectedPage";
 import useHostOnlyPage from "../components/HostOnlyPage";
 import {
   Box,
+  Button,
   Checkbox,
   Container,
   FormControl,
   FormHelperText,
   FormLabel,
+  Grid,
   Heading,
   Input,
   InputGroup,
@@ -17,8 +19,18 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { FaBed, FaMoneyBill, FaToilet } from "react-icons/fa";
+import { useQuery } from "@tanstack/react-query";
+import { IAmenity, ICategory } from "../types";
+import { getAmenities, getCategories } from "../api";
 
-const UploadRoom = () => {
+const UploadRoom: React.FC = () => {
+  const { data: amenities, isLoading: isAmenitiesLoading } = useQuery<
+    IAmenity[]
+  >(["amenities"], getAmenities);
+  const { data: categories, isLoading: isCategoriesLoading } = useQuery<
+    ICategory[]
+  >(["categories"], getCategories);
+
   useHostOnlyPage();
   return (
     <ProtectedPage>
@@ -32,7 +44,7 @@ const UploadRoom = () => {
       >
         <Container>
           <Heading>Upload Room</Heading>
-          <VStack spacing={5} as="form" mt={5}>
+          <VStack spacing={10} as="form" mt={5}>
             <FormControl>
               <FormLabel>Name</FormLabel>
               <Input required type="text" />
@@ -89,6 +101,33 @@ const UploadRoom = () => {
                 What kind of room are you renting?
               </FormHelperText>
             </FormControl>
+            <FormControl>
+              <FormLabel>Category</FormLabel>
+              <Select placeholder="Choose a kind">
+                {categories?.map((category) => (
+                  <option key={category.pk} value={category.pk}>
+                    {category.name}
+                  </option>
+                ))}
+              </Select>
+              <FormHelperText>
+                What category describes your room?
+              </FormHelperText>
+            </FormControl>
+            <FormControl>
+              <FormLabel>Amenities</FormLabel>
+              <Grid templateColumns={"1fr 1fr"} gap={5}>
+                {amenities?.map((amenity) => (
+                  <Box key={amenity.pk}>
+                    <Checkbox>{amenity.name}</Checkbox>
+                    <FormHelperText>{amenity.description}</FormHelperText>
+                  </Box>
+                ))}
+              </Grid>
+            </FormControl>
+            <Button colorScheme={"red"} size="lg" w="100%">
+              Upload Room
+            </Button>
           </VStack>
         </Container>
       </Box>
